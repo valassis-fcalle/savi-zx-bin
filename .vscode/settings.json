@@ -1,0 +1,6 @@
+{
+  "eslint.workingDirectories": ["."],
+  "eslint.validate": ["javascript", "json"],
+  "eslint.lintTask.enable": true,
+  "eslint.lintTask.options": "."
+}
