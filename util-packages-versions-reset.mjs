@@ -1,13 +1,10 @@
 #!/usr/bin/env zx
 
-import { allPackagesNames, packagesMap } from './util-packages-process.mjs';
-import { writeFile } from 'fs';
-import { promisify } from 'util';
-
-const write = promisify(writeFile);
+import { $, chalk, fs } from 'zx';
+import { allPackagesNames, packagesMap } from './util-packages-process';
 
 async function resetVersions() {
-  for (let index = 0; index < allPackagesNames.length; index++) {
+  for (let index = 0; index < allPackagesNames.length; index += 1) {
     const packageName = allPackagesNames[index];
     const { json, path } = packagesMap[packageName];
     console.log('Version reset', packageName, 'at', path);
@@ -15,7 +12,7 @@ async function resetVersions() {
     const version = `${result.stdout}`.trim();
     console.log(chalk.gray(`\t> new version is: ${version}`));
     json.version = version;
-    await write(`${path}/package.json`, JSON.stringify(json, null, 2));
+    await fs.writeJson(`${path}/package.json`, json, { spaces: 2 });
   }
 }
 

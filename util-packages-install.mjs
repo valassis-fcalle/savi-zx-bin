@@ -1,43 +1,50 @@
 #!/usr/bin/env zx
 
-import { allPackagesNames, packagesMap } from './util-packages-process.mjs';
+import { $, cd, chalk, fs } from 'zx';
+import { allPackagesNames, packagesMap } from './util-packages-process';
 
 function pick(hasCapiDependencies) {
-  const packagesNames = allPackagesNames.filter((packageName) => {
-    const { json } = packagesMap[packageName];
+  const packagesNames = allPackagesNames
+    .filter((packageName) => {
+      const { json } = packagesMap[packageName];
 
-    const foundInDependencies = Object.keys(json.dependencies || {}).find(
-      (dependencyName) => dependencyName.startsWith('@digital-coupons')
-    );
-    const foundInDevDependencies = Object.keys(json.devDependencies || {}).find(
-      (dependencyName) => dependencyName.startsWith('@digital-coupons')
-    );
-    const foundInPeerDependencies = Object.keys(
-      json.peerDependencies || {}
-    ).find((dependencyName) => dependencyName.startsWith('@digital-coupons'));
+      const foundInDependencies = Object.keys(json.dependencies || {}).find(
+        (dependencyName) => dependencyName.startsWith('@digital-coupons')
+      );
+      const foundInDevDependencies = Object.keys(
+        json.devDependencies || {}
+      ).find((dependencyName) => dependencyName.startsWith('@digital-coupons'));
+      const foundInPeerDependencies = Object.keys(
+        json.peerDependencies || {}
+      ).find((dependencyName) => dependencyName.startsWith('@digital-coupons'));
 
-    if (
-      hasCapiDependencies &&
-      (foundInDependencies || foundInDevDependencies || foundInPeerDependencies)
-    ) {
-      return packageName;
-    }
+      if (
+        hasCapiDependencies &&
+        (foundInDependencies ||
+          foundInDevDependencies ||
+          foundInPeerDependencies)
+      ) {
+        return packageName;
+      }
 
-    if (
-      !hasCapiDependencies &&
-      !foundInDependencies &&
-      !foundInDevDependencies &&
-      !foundInPeerDependencies
-    ) {
-      return packageName;
-    }
-  });
+      if (
+        !hasCapiDependencies &&
+        !foundInDependencies &&
+        !foundInDevDependencies &&
+        !foundInPeerDependencies
+      ) {
+        return packageName;
+      }
+
+      return undefined;
+    })
+    .filter((packageName) => packageName !== undefined);
 
   return packagesNames;
 }
 
 async function installPackages(packagesNames) {
-  for (let index = 0; index < packagesNames.length; index++) {
+  for (let index = 0; index < packagesNames.length; index += 1) {
     const packageName = packagesNames[index];
     console.log('NPM install at', packageName);
 

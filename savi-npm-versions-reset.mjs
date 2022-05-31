@@ -1,7 +1,9 @@
 #!/usr/bin/env zx
 
-import { processPackages } from './util-packages-process.mjs';
-import { resetVersions } from './util-packages-versions-reset.mjs';
+import { $ } from 'zx';
+import { processPackages } from './util-packages-process';
+import { resetVersions } from './util-packages-versions-reset';
+
 $.verbose = process.env.DEBUG === 'true' || false;
 
 await processPackages();

@@ -1,6 +1,7 @@
 #!/usr/bin/env zx
 
-import { allPackagesNames, packagesMap } from './util-packages-process.mjs';
+import { $, cd, chalk, fs } from 'zx';
+import { allPackagesNames, packagesMap } from './util-packages-process';
 
 $.verbose = process.env.DEBUG === 'true' || false;
 
@@ -8,41 +9,47 @@ const whichResult = await $`npm root --global`;
 const ROOT_NODE_MODULES = `${whichResult.stdout}`;
 
 function pick(hasCapiDependencies) {
-  const packagesNames = allPackagesNames.filter((packageName) => {
-    const { json } = packagesMap[packageName];
+  const packagesNames = allPackagesNames
+    .filter((packageName) => {
+      const { json } = packagesMap[packageName];
 
-    const foundInDependencies = Object.keys(json.dependencies || {}).find(
-      (dependencyName) => dependencyName.startsWith('@digital-coupons')
-    );
-    const foundInDevDependencies = Object.keys(json.devDependencies || {}).find(
-      (dependencyName) => dependencyName.startsWith('@digital-coupons')
-    );
-    const foundInPeerDependencies = Object.keys(
-      json.peerDependencies || {}
-    ).find((dependencyName) => dependencyName.startsWith('@digital-coupons'));
+      const foundInDependencies = Object.keys(json.dependencies || {}).find(
+        (dependencyName) => dependencyName.startsWith('@digital-coupons')
+      );
+      const foundInDevDependencies = Object.keys(
+        json.devDependencies || {}
+      ).find((dependencyName) => dependencyName.startsWith('@digital-coupons'));
+      const foundInPeerDependencies = Object.keys(
+        json.peerDependencies || {}
+      ).find((dependencyName) => dependencyName.startsWith('@digital-coupons'));
 
-    if (
-      hasCapiDependencies &&
-      (foundInDependencies || foundInDevDependencies || foundInPeerDependencies)
-    ) {
-      return packageName;
-    }
+      if (
+        hasCapiDependencies &&
+        (foundInDependencies ||
+          foundInDevDependencies ||
+          foundInPeerDependencies)
+      ) {
+        return packageName;
+      }
 
-    if (
-      !hasCapiDependencies &&
-      !foundInDependencies &&
-      !foundInDevDependencies &&
-      !foundInPeerDependencies
-    ) {
-      return packageName;
-    }
-  });
+      if (
+        !hasCapiDependencies &&
+        !foundInDependencies &&
+        !foundInDevDependencies &&
+        !foundInPeerDependencies
+      ) {
+        return packageName;
+      }
+
+      return undefined;
+    })
+    .filter((packageName) => packageName !== undefined);
 
   return packagesNames;
 }
 
 async function createLinksForSet(packagesNames) {
-  for (let index = 0; index < packagesNames.length; index++) {
+  for (let index = 0; index < packagesNames.length; index += 1) {
     const packageName = packagesNames[index];
     console.log(
       `[${index + 1}/${packagesNames.length}]`,
@@ -66,7 +73,7 @@ function isSymbolicLink(path, packageName) {
 }
 
 async function usesSymLinks(packagesNames) {
-  for (let index = 0; index < packagesNames.length; index++) {
+  for (let index = 0; index < packagesNames.length; index += 1) {
     const packageName = packagesNames[index];
     console.log(
       `[${index + 1}/${packagesNames.length}]`,
@@ -98,7 +105,7 @@ async function checkLinks() {
 
 async function useLinks() {
   const dependant = pick(true);
-  for (let index = 0; index < dependant.length; index++) {
+  for (let index = 0; index < dependant.length; index += 1) {
     const packageName = dependant[index];
     console.log(
       `[${index + 1}/${dependant.length}]`,
@@ -108,7 +115,7 @@ async function useLinks() {
 
     const { dependencies, path } = packagesMap[packageName];
     cd(path);
-    for (let depsIndex = 0; depsIndex < dependencies.length; depsIndex++) {
+    for (let depsIndex = 0; depsIndex < dependencies.length; depsIndex += 1) {
       const dependency = dependencies[depsIndex];
       const prefix = `[${depsIndex + 1}/${dependencies.length}]`;
       try {

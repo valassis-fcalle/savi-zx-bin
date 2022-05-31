@@ -6,7 +6,7 @@ if (!process.env.ALL_CAPI_HOME || process.env.ALL_CAPI_HOME.length === 0) {
   console.error('🔥 ALL_CAPI_HOME env variable not found or empty');
   process.exit(1);
 }
-const ALL_CAPI_HOME = process.env.ALL_CAPI_HOME;
+const { ALL_CAPI_HOME } = process.env;
 
 const packagesMap = {};
 let allPackagesNames = null;
@@ -76,13 +76,10 @@ function processPackages(force = false) {
     process.exit(1);
   }
 
-  allPackagesNames = Object.values(packagesMap).reduce(
-    (previous, current, index, all) => {
-      const allDeps = previous.concat(current.dependencies);
-      return [...new Set(allDeps)];
-    },
-    []
-  );
+  allPackagesNames = Object.values(packagesMap).reduce((previous, current) => {
+    const allDeps = previous.concat(current.dependencies);
+    return [...new Set(allDeps)];
+  }, []);
 
   if (!allPackagesNames || allPackagesNames.length === 0) {
     console.error('CAPI dependencies not found or empty');
@@ -90,4 +87,4 @@ function processPackages(force = false) {
   }
 }
 
-export { allPackagesNames as allPackagesNames, packagesMap, processPackages };
+export { allPackagesNames, packagesMap, processPackages };

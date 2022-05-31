@@ -1,7 +1,8 @@
 #!/usr/bin/env zx
 
-import { processPackages } from './util-packages-process.mjs';
-import { useLinks } from './util-packages-links.mjs';
+import { $ } from 'zx';
+import { processPackages } from './util-packages-process';
+import { useLinks } from './util-packages-links';
 
 $.verbose = process.env.DEBUG === 'true' || false;
 

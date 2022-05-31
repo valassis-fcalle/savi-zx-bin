@@ -1,9 +1,10 @@
 #!/usr/bin/env zx
 
-import { allPackagesNames, packagesMap } from './util-packages-process.mjs';
+import { chalk, fs } from 'zx';
+import { allPackagesNames, packagesMap } from './util-packages-process';
 
 async function resetDependencies() {
-  for (let index = 0; index < allPackagesNames.length; index++) {
+  for (let index = 0; index < allPackagesNames.length; index += 1) {
     const packageName = allPackagesNames[index];
     const { json, path } = packagesMap[packageName];
     console.log('Dependencies reset', packageName, 'at', path);
