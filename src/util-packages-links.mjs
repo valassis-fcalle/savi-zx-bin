@@ -1,7 +1,7 @@
 #!/usr/bin/env zx
 
 import { $, cd, chalk, fs } from 'zx';
-import { allPackagesNames, packagesMap } from './util-packages-process';
+import { allPackagesNames, packagesMap } from './util-packages-process.mjs';
 
 $.verbose = process.env.DEBUG === 'true' || false;
 

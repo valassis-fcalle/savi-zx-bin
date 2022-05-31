@@ -1,7 +1,7 @@
 #!/usr/bin/env zx
 
 import { chalk, fs } from 'zx';
-import { allPackagesNames, packagesMap } from './util-packages-process';
+import { allPackagesNames, packagesMap } from './util-packages-process.mjs';
 
 async function resetDependencies() {
   for (let index = 0; index < allPackagesNames.length; index += 1) {
