@@ -31,5 +31,8 @@
   },
   "lint-staged": {
     "**/*": "prettier --write --ignore-unknown"
+  },
+  "dependencies": {
+    "zx": "6.1.0"
   }
 }
