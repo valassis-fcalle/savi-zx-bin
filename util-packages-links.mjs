@@ -44,7 +44,11 @@ function pick(hasCapiDependencies) {
 async function createLinksForSet(packagesNames) {
   for (let index = 0; index < packagesNames.length; index++) {
     const packageName = packagesNames[index];
-    console.log("Creating link for", packageName);
+    console.log(
+      `[${index + 1}/${packagesNames.length}]`,
+      "Creating link for",
+      packageName
+    );
 
     if (!fs.pathExists(`${ROOT_NODE_MODULES}/${packageName}`)) {
       const { path } = packagesMap[packagesNames[index]];
@@ -65,7 +69,7 @@ async function usesSymLinks(packagesNames) {
   for (let index = 0; index < packagesNames.length; index++) {
     const packageName = packagesNames[index];
     console.log(
-      `[${index}/packagesNames.length]`,
+      `[${index + 1}/${packagesNames.length}]`,
       "Checking link for",
       packageName,
       "..."
@@ -93,21 +97,29 @@ async function checkLinks() {
 }
 
 async function useLinks() {
-  for (let index = 0; index < allPackagesNames.length; index++) {
-    const packageName = allPackagesNames[index];
-    console.log("Using links for", packageName);
+  const dependant = pick(true);
+  for (let index = 0; index < dependant.length; index++) {
+    const packageName = dependant[index];
+    console.log(
+      `[${index + 1}/${dependant.length}]`,
+      "Using links for",
+      packageName
+    );
 
     const { dependencies, path } = packagesMap[packageName];
     cd(path);
     for (let depsIndex = 0; depsIndex < dependencies.length; depsIndex++) {
       const dependency = dependencies[depsIndex];
+      const prefix = `[${depsIndex + 1}/${dependencies.length}]`;
       try {
         if (isSymbolicLink(path, dependency)) {
           console.log(
-            chalk.gray(`  ${dependency} symlink already exists. Skipping...`)
+            chalk.gray(
+              `  ${prefix} ${dependency} symlink already exists. Skipping...`
+            )
           );
         } else {
-          console.log(`  Linking ${dependency}`);
+          console.log(`  ${prefix} Linking ${dependency}`);
           await $`npm link ${dependency}`;
         }
       } catch (errorLinking) {
