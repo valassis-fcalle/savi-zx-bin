@@ -1,0 +1,20 @@
+{
+  "name": "savi-zx-bin",
+  "version": "1.0.0",
+  "description": "Set of command line tools to help developers interact with local environment",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/valassis-fcalle/savi-zx-bin.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/valassis-fcalle/savi-zx-bin/issues"
+  },
+  "homepage": "https://github.com/valassis-fcalle/savi-zx-bin#readme"
+}
