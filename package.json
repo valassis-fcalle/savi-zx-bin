@@ -18,6 +18,9 @@
     "url": "https://github.com/valassis-fcalle/savi-zx-bin/issues"
   },
   "homepage": "https://github.com/valassis-fcalle/savi-zx-bin#readme",
+  "dependencies": {
+    "zx": "6.1.0"
+  },
   "devDependencies": {
     "@commitlint/cli": "17.0.1",
     "@commitlint/config-conventional": "17.0.0",
@@ -29,10 +32,8 @@
     "lint-staged": "12.4.3",
     "prettier": "2.6.2"
   },
+  "type": "module",
   "lint-staged": {
     "**/*": "prettier --write --ignore-unknown"
-  },
-  "dependencies": {
-    "zx": "6.1.0"
   }
 }

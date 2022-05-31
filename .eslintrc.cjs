@@ -9,6 +9,7 @@ module.exports = {
     sourceType: 'module',
   },
   rules: {
+    'import/extensions': 0,
     'import/prefer-default-export': 0,
     'no-await-in-loop': 0,
   },
