@@ -1,8 +1,8 @@
 #!/usr/bin/env zx
 
-import { allPackagesNames, packagesMap } from "./util-packages-process.mjs";
+import { allPackagesNames, packagesMap } from './util-packages-process.mjs';
 
-$.verbose = process.env.DEBUG === "true" || false;
+$.verbose = process.env.DEBUG === 'true' || false;
 
 const whichResult = await $`npm root --global`;
 const ROOT_NODE_MODULES = `${whichResult.stdout}`;
@@ -12,14 +12,14 @@ function pick(hasCapiDependencies) {
     const { json } = packagesMap[packageName];
 
     const foundInDependencies = Object.keys(json.dependencies || {}).find(
-      (dependencyName) => dependencyName.startsWith("@digital-coupons")
+      (dependencyName) => dependencyName.startsWith('@digital-coupons')
     );
     const foundInDevDependencies = Object.keys(json.devDependencies || {}).find(
-      (dependencyName) => dependencyName.startsWith("@digital-coupons")
+      (dependencyName) => dependencyName.startsWith('@digital-coupons')
     );
     const foundInPeerDependencies = Object.keys(
       json.peerDependencies || {}
-    ).find((dependencyName) => dependencyName.startsWith("@digital-coupons"));
+    ).find((dependencyName) => dependencyName.startsWith('@digital-coupons'));
 
     if (
       hasCapiDependencies &&
@@ -46,7 +46,7 @@ async function createLinksForSet(packagesNames) {
     const packageName = packagesNames[index];
     console.log(
       `[${index + 1}/${packagesNames.length}]`,
-      "Creating link for",
+      'Creating link for',
       packageName
     );
 
@@ -55,7 +55,7 @@ async function createLinksForSet(packagesNames) {
       cd(path);
       await $`npm link`;
     } else {
-      console.log(chalk.gray("  Link already created. Skipping ..."));
+      console.log(chalk.gray('  Link already created. Skipping ...'));
     }
   }
 }
@@ -70,9 +70,9 @@ async function usesSymLinks(packagesNames) {
     const packageName = packagesNames[index];
     console.log(
       `[${index + 1}/${packagesNames.length}]`,
-      "Checking link for",
+      'Checking link for',
       packageName,
-      "..."
+      '...'
     );
     const { dependencies, path } = packagesMap[packageName];
     dependencies.forEach((dependency) => {
@@ -102,7 +102,7 @@ async function useLinks() {
     const packageName = dependant[index];
     console.log(
       `[${index + 1}/${dependant.length}]`,
-      "Using links for",
+      'Using links for',
       packageName
     );
 

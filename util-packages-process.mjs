@@ -1,9 +1,9 @@
 #!/usr/bin/env zx
 
-import { existsSync, lstatSync, readdirSync, readFileSync } from "fs";
+import { existsSync, lstatSync, readdirSync, readFileSync } from 'fs';
 
 if (!process.env.ALL_CAPI_HOME || process.env.ALL_CAPI_HOME.length === 0) {
-  console.error("🔥 ALL_CAPI_HOME env variable not found or empty");
+  console.error('🔥 ALL_CAPI_HOME env variable not found or empty');
   process.exit(1);
 }
 const ALL_CAPI_HOME = process.env.ALL_CAPI_HOME;
@@ -23,7 +23,7 @@ function processPackages(force = false) {
 
   // list all folders in all-capi
   const dirNames = readdirSync(ALL_CAPI_HOME)
-    .filter((entry) => !entry.startsWith("."))
+    .filter((entry) => !entry.startsWith('.'))
     .filter((entry) => lstatSync(`${ALL_CAPI_HOME}/${entry}`).isDirectory())
     .filter((entry) => existsSync(`${ALL_CAPI_HOME}/${entry}/package.json`));
 
@@ -38,7 +38,7 @@ function processPackages(force = false) {
       currentDependencies = currentDependencies.concat(
         currentDependencies,
         Object.keys(json.dependencies).filter((dependency) =>
-          dependency.startsWith("@digital-")
+          dependency.startsWith('@digital-')
         )
       );
     }
@@ -46,7 +46,7 @@ function processPackages(force = false) {
       currentDependencies = currentDependencies.concat(
         currentDependencies,
         Object.keys(json.devDependencies).filter((dependency) =>
-          dependency.startsWith("@digital-")
+          dependency.startsWith('@digital-')
         )
       );
     }
@@ -55,7 +55,7 @@ function processPackages(force = false) {
       currentDependencies = currentDependencies.concat(
         currentDependencies,
         Object.keys(json.peerDependencies).filter((dependency) =>
-          dependency.startsWith("@digital-")
+          dependency.startsWith('@digital-')
         )
       );
     }
@@ -72,7 +72,7 @@ function processPackages(force = false) {
   });
 
   if (Object.keys(packagesMap).length === 0) {
-    console.error("CAPI package map empty");
+    console.error('CAPI package map empty');
     process.exit(1);
   }
 
@@ -85,7 +85,7 @@ function processPackages(force = false) {
   );
 
   if (!allPackagesNames || allPackagesNames.length === 0) {
-    console.error("CAPI dependencies not found or empty");
+    console.error('CAPI dependencies not found or empty');
     process.exit(1);
   }
 }

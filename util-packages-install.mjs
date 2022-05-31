@@ -1,20 +1,20 @@
 #!/usr/bin/env zx
 
-import { allPackagesNames, packagesMap } from "./util-packages-process.mjs";
+import { allPackagesNames, packagesMap } from './util-packages-process.mjs';
 
 function pick(hasCapiDependencies) {
   const packagesNames = allPackagesNames.filter((packageName) => {
     const { json } = packagesMap[packageName];
 
     const foundInDependencies = Object.keys(json.dependencies || {}).find(
-      (dependencyName) => dependencyName.startsWith("@digital-coupons")
+      (dependencyName) => dependencyName.startsWith('@digital-coupons')
     );
     const foundInDevDependencies = Object.keys(json.devDependencies || {}).find(
-      (dependencyName) => dependencyName.startsWith("@digital-coupons")
+      (dependencyName) => dependencyName.startsWith('@digital-coupons')
     );
     const foundInPeerDependencies = Object.keys(
       json.peerDependencies || {}
-    ).find((dependencyName) => dependencyName.startsWith("@digital-coupons"));
+    ).find((dependencyName) => dependencyName.startsWith('@digital-coupons'));
 
     if (
       hasCapiDependencies &&
@@ -39,7 +39,7 @@ function pick(hasCapiDependencies) {
 async function installPackages(packagesNames) {
   for (let index = 0; index < packagesNames.length; index++) {
     const packageName = packagesNames[index];
-    console.log("NPM install at", packageName);
+    console.log('NPM install at', packageName);
 
     const { path } = packagesMap[packagesNames[index]];
     cd(path);
@@ -48,7 +48,7 @@ async function installPackages(packagesNames) {
       if (!hasNodeModules) {
         await $`npm i`;
       } else {
-        console.log(chalk.gray("\tInstallation skipped ..."));
+        console.log(chalk.gray('\tInstallation skipped ...'));
       }
     } catch (error) {
       console.error(`Error installing dependencies at ${packageName}`);

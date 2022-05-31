@@ -4,13 +4,13 @@ import {
   allPackagesNames,
   packagesMap,
   processPackages,
-} from "./util-packages-process.mjs";
+} from './util-packages-process.mjs';
 
 async function resetGit() {
   for (let index = 0; index < allPackagesNames.length; index++) {
     const packageName = allPackagesNames[index];
     const { path } = packagesMap[packageName];
-    console.log("Git reset", packageName, "at", path);
+    console.log('Git reset', packageName, 'at', path);
 
     cd(path);
     await $`git clean -fdx`;
