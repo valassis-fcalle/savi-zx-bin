@@ -1,6 +1,7 @@
 #!/usr/bin/env zx
 
 import { $, cd, chalk, fs } from 'zx';
+import ora from 'ora';
 import { allPackagesNames, packagesMap } from './util-packages-process.mjs';
 
 $.verbose = process.env.DEBUG === 'true' || false;
@@ -73,6 +74,8 @@ function isSymbolicLink(path, packageName) {
 }
 
 async function usesSymLinks(packagesNames) {
+  const spinner = ora('Checking links ...');
+
   for (let index = 0; index < packagesNames.length; index += 1) {
     const packageName = packagesNames[index];
     console.log(
@@ -82,11 +85,14 @@ async function usesSymLinks(packagesNames) {
       '...'
     );
     const { dependencies, path } = packagesMap[packageName];
+    spinner.start();
     dependencies.forEach((dependency) => {
+      spinner.text = `Checking dependency ${dependency}`;
       if (!isSymbolicLink(path, dependency)) {
         console.log(chalk.red(`  Dependency ${dependency} is not a symlink`));
       }
     });
+    spinner.stop();
   }
 }
 
