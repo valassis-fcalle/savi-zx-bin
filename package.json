@@ -19,6 +19,7 @@
   },
   "homepage": "https://github.com/valassis-fcalle/savi-zx-bin#readme",
   "dependencies": {
+    "ora": "6.1.0",
     "zx": "6.1.0"
   },
   "devDependencies": {
