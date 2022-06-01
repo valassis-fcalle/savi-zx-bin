@@ -9,7 +9,8 @@ if (!process.env.ALL_CAPI_HOME || process.env.ALL_CAPI_HOME.length === 0) {
 const { ALL_CAPI_HOME } = process.env;
 
 const packagesMap = {};
-let allPackagesNames = null;
+let allPackagesNames = [];
+let allDependenciesNames = [];
 
 function processPackages(force = false) {
   // skip if already processed
@@ -76,10 +77,14 @@ function processPackages(force = false) {
     process.exit(1);
   }
 
-  allPackagesNames = Object.values(packagesMap).reduce((previous, current) => {
-    const allDeps = previous.concat(current.dependencies);
-    return [...new Set(allDeps)];
-  }, []);
+  allPackagesNames = Object.keys(packagesMap);
+  allDependenciesNames = Object.values(packagesMap).reduce(
+    (previous, current) => {
+      const allDeps = previous.concat(current.dependencies);
+      return [...new Set(allDeps)];
+    },
+    []
+  );
 
   if (!allPackagesNames || allPackagesNames.length === 0) {
     console.error('CAPI dependencies not found or empty');
@@ -87,4 +92,4 @@ function processPackages(force = false) {
   }
 }
 
-export { allPackagesNames, packagesMap, processPackages };
+export { allPackagesNames, allDependenciesNames, packagesMap, processPackages };
