@@ -1,8 +1,8 @@
 #!/usr/bin/env zx
 
 import { $ } from 'zx';
-import { processPackages } from './util-packages-process.mjs';
-import { resetDependencies } from './util-packages-dependencies-reset.mjs';
+import { processPackages } from './util/packages-process.mjs';
+import { resetDependencies } from './util/packages-dependencies-reset.mjs';
 
 $.verbose = process.env.DEBUG === 'true' || false;
 

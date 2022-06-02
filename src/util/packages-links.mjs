@@ -2,52 +2,14 @@
 
 import { $, cd, chalk, fs } from 'zx';
 import ora from 'ora';
-import { allPackagesNames, packagesMap } from './util-packages-process.mjs';
+import { packagesMap } from './packages-process.mjs';
+import { pick } from './pick.mjs';
 
 $.verbose = process.env.DEBUG === 'true' || false;
 
 const whichResult = await $`npm root --global`;
 const ROOT_NODE_MODULES = `${whichResult.stdout}`;
-
-function pick(hasCapiDependencies) {
-  const packagesNames = allPackagesNames
-    .filter((packageName) => {
-      const { json } = packagesMap[packageName];
-
-      const foundInDependencies = Object.keys(json.dependencies || {}).find(
-        (dependencyName) => dependencyName.startsWith('@digital-coupons')
-      );
-      const foundInDevDependencies = Object.keys(
-        json.devDependencies || {}
-      ).find((dependencyName) => dependencyName.startsWith('@digital-coupons'));
-      const foundInPeerDependencies = Object.keys(
-        json.peerDependencies || {}
-      ).find((dependencyName) => dependencyName.startsWith('@digital-coupons'));
-
-      if (
-        hasCapiDependencies &&
-        (foundInDependencies ||
-          foundInDevDependencies ||
-          foundInPeerDependencies)
-      ) {
-        return packageName;
-      }
-
-      if (
-        !hasCapiDependencies &&
-        !foundInDependencies &&
-        !foundInDevDependencies &&
-        !foundInPeerDependencies
-      ) {
-        return packageName;
-      }
-
-      return undefined;
-    })
-    .filter((packageName) => packageName !== undefined);
-
-  return packagesNames;
-}
+const { ALL_CAPI_HOME } = process.env;
 
 async function createLinksForSet(packagesNames) {
   for (let index = 0; index < packagesNames.length; index += 1) {
@@ -69,6 +31,9 @@ async function createLinksForSet(packagesNames) {
 }
 
 function isSymbolicLink(path, packageName) {
+  if (!fs.existsSync(`${path}/node_modules/${packageName}`)) {
+    return false;
+  }
   const statsObj = fs.lstatSync(`${path}/node_modules/${packageName}`);
   return statsObj.isSymbolicLink();
 }
@@ -118,28 +83,38 @@ async function useLinks() {
       'Using links for',
       packageName
     );
-
     const { dependencies, path } = packagesMap[packageName];
+
     cd(path);
+    const spinner = ora('Using links ...').start();
     for (let depsIndex = 0; depsIndex < dependencies.length; depsIndex += 1) {
       const dependency = dependencies[depsIndex];
-      const prefix = `[${depsIndex + 1}/${dependencies.length}]`;
+      const prefix = `  [${depsIndex + 1}/${dependencies.length}]`;
       try {
+        spinner.prefixText = prefix;
+
         if (isSymbolicLink(path, dependency)) {
-          console.log(
-            chalk.gray(
-              `  ${prefix} ${dependency} symlink already exists. Skipping...`
-            )
-          );
+          spinner.text = `${dependency} symlink already exists. Skipping...`;
+          // console.log(
+          //   chalk.gray(
+          //     `  ${prefix} ${dependency} symlink already exists. Skipping...`
+          //   )
+          // );
         } else {
-          console.log(`  ${prefix} Linking ${dependency}`);
-          await $`npm link ${dependency}`;
+          spinner.text = `Linking ${dependency}`;
+          // console.log(`  ${prefix} Linking ${dependency}`);
+          // await $`npm link ${dependency}`;
+          const symlinkSource = `${ALL_CAPI_HOME}/${packagesMap[dependency].name.folder}`;
+          await $`rm -rf ./node_modules/${dependency}`;
+          await $`ln -s ${symlinkSource} ./node_modules/${dependency}`;
         }
       } catch (errorLinking) {
+        spinner.fail(`Error linking at ${packageName} package ${dependency}`);
         console.log(`Error linking at ${packageName} package ${dependency}`);
         console.error(errorLinking);
       }
     }
+    spinner.stop();
   }
 }
 

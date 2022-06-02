@@ -5,7 +5,7 @@ import {
   allPackagesNames,
   packagesMap,
   processPackages,
-} from './util-packages-process.mjs';
+} from './packages-process.mjs';
 
 async function resetGit() {
   for (let index = 0; index < allPackagesNames.length; index + 1) {
