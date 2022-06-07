@@ -14,46 +14,24 @@ const GITHUB_ORGANIZATION = 'Valassis-Digital-Media';
 const GITHUB_USER = 'git';
 const PACKAGES_PREFIX = '@digital-coupons/';
 
+let initialized = false;
 const mapping = {
   package: {},
   repository: {},
 };
 
-async function cloneRepository({ parentFolder, repository, force = false }) {
-  cd(parentFolder);
-  console.log('⬇️ ', chalk.bold('Cloning repository'));
-  console.log('parentFolder:', parentFolder);
-  console.log('repository  :', repository);
-
-  if (force) {
-    await $`rm -rf ${repository}`;
-  }
-  if (fs.existsSync(repository)) {
-    console.log(chalk.yellow('Repository already exists'));
+async function refreshRepositoriesMapping() {
+  if (initialized && fs.existsSync(CACHE_FILE_PATH)) {
+    console.log(chalk.yellowBright(`${CACHE_FILE_PATH} file already exists`));
+    console.log(chalk.gray('  - remove it to force repositories refresh'));
     return;
   }
-  await $`gh repo clone ${GITHUB_ORGANIZATION}/${repository}`;
-}
-
-function getPackageName(name = '') {
-  if (name.startsWith(PACKAGES_PREFIX)) {
-    return name;
-  }
-  return `${PACKAGES_PREFIX}${name}`;
-}
-
-function getPackageNameByRepoName(name) {
-  return mapping.repository[name];
-}
-
-function getRepoNameByPackage(name) {
-  return mapping.package[getPackageName(name)];
-}
-
-async function refreshRepositoriesMapping() {
-  if (fs.existsSync(CACHE_FILE_PATH)) {
-    console.log(chalk.yellowBright(`${CACHE_FILE_PATH} file already exists`));
-    console.log(chalk.gray('remove it to force repositories refresh'));
+  if (!initialized && fs.existsSync(CACHE_FILE_PATH)) {
+    console.log(chalk.gray('Loading mapping from cache...'));
+    const json = await fs.readJSON(CACHE_FILE_PATH);
+    mapping.package = json.mapping.package;
+    mapping.repository = json.mapping.repository;
+    initialized = true;
     return;
   }
 
@@ -109,6 +87,41 @@ async function refreshRepositoriesMapping() {
   console.log('💾 ', chalk.bold.white(`Writing cache file:`));
   console.log(CACHE_FILE_PATH);
   await fs.writeJson(CACHE_FILE_PATH, { mapping }, { spaces: 2 });
+  initialized();
+}
+
+async function cloneRepository({ parentFolder, repository, force = false }) {
+  cd(parentFolder);
+  console.log('⬇️ ', chalk.bold('Cloning repository'));
+  console.log('parentFolder:', parentFolder);
+  console.log('repository  :', repository);
+
+  if (force) {
+    await $`rm -rf ${repository}`;
+  }
+  if (fs.existsSync(repository)) {
+    console.log(chalk.yellow('Repository already exists'));
+    return;
+  }
+  await $`gh repo clone ${GITHUB_ORGANIZATION}/${repository}`;
+}
+
+function getPackageName(name = '') {
+  if (name.startsWith(PACKAGES_PREFIX)) {
+    return name;
+  }
+  return `${PACKAGES_PREFIX}${name}`;
+}
+
+function getPackageNameByRepoName(name) {
+  return mapping.repository[name];
+}
+
+async function getRepoNameByPackage(name) {
+  if (!initialized) {
+    await refreshRepositoriesMapping();
+  }
+  return mapping.package[getPackageName(name)];
 }
 
 async function resetToMaster(repositoryFolder, hardClean = false) {

@@ -1,7 +1,7 @@
 #!/usr/bin/env zx
 
 import { $, argv, cd, chalk, fs, path, question, quiet } from 'zx';
-import { SAVI_HOME_ALL_CAPI } from './util/env.mjs';
+import { SAVI_HOME_ALL_CAPI, SAVI_HOME_ALL_WEB } from './util/env.mjs';
 import {
   cloneRepository,
   getPackageName,
@@ -21,25 +21,23 @@ if (argv.about) {
   );
   process.exit(0);
 }
-
-const projectDirectory = `${await $`pwd`}`;
-const digitalCouponsDependenciesFolder = './node_modules/@digital-coupons';
+const pwd = await $`pwd`;
+const projectDirectory = `${pwd}`.replace(/\n/gi, '');
 const digitalCouponsDependenciesPath = path.resolve(
   projectDirectory,
-  digitalCouponsDependenciesFolder
+  'node_modules/@digital-coupons/'
 );
 
-if (!fs.existsSync(digitalCouponsDependenciesPath)) {
-  console.log(
-    chalk.red(`  🔥 Cannot find ${digitalCouponsDependenciesFolder}`)
-  );
+if (!fs.pathExistsSync(digitalCouponsDependenciesPath)) {
+  console.log(chalk.red(`🔥 Cannot find ${digitalCouponsDependenciesPath}`));
   process.exit(1);
 }
 
 const installedDependencies = fs.readdirSync(digitalCouponsDependenciesPath);
 for (let index = 0; index < installedDependencies.length; index += 1) {
   const dependency = installedDependencies[index];
-  const repoName = getRepoNameByPackage(getPackageName(dependency));
+  const dependencyPackageName = getPackageName(dependency);
+  const repoName = await getRepoNameByPackage(dependencyPackageName);
   // if dependency is not downloaded, ask the user to clone the repo
   if (!repoName) {
     console.log(chalk.yellow(`Dependency not download: ${dependency}`));
@@ -65,7 +63,21 @@ for (let index = 0; index < installedDependencies.length; index += 1) {
     }
   }
 
-  cd(path.resolve(projectDirectory, 'node_modules'));
-  await $`rm -rf dependency`;
-  await $`ln -s ${SAVI_HOME_ALL_CAPI}/${repoName} ${dependency}`;
+  cd(path.resolve(projectDirectory, 'node_modules', '@digital-coupons'));
+  await $`rm -rf ${dependency}`;
+  if (fs.pathExistsSync(`${SAVI_HOME_ALL_CAPI}/${repoName}`)) {
+    await $`ln -s ${SAVI_HOME_ALL_CAPI}/${repoName} ${dependency}`;
+  } else if (fs.pathExistsSync(`${SAVI_HOME_ALL_WEB}/${repoName}`)) {
+    await $`ln -s ${SAVI_HOME_ALL_WEB}/${repoName} ${dependency}`;
+  } else {
+    console.log(
+      chalk.red.bold(`Cannot link ${dependency} (repo name is: ${repoName})`)
+    );
+    console.log(
+      chalk.red.bold(`Not found at ${SAVI_HOME_ALL_CAPI}/${repoName}}`)
+    );
+    console.log(
+      chalk.red.bold(`Not found at ${SAVI_HOME_ALL_WEB}/${repoName}}`)
+    );
+  }
 }
