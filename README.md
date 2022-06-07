@@ -18,6 +18,7 @@ export ALL_CAPI_HOME=/Users/<your user>/Dev/savi/all-capi
 export ALL_WEB_HOME=/Users/<your user>/Dev/savi/all-web
 
 PATH_add ./savi-zx-bin/src
+PATH_add ./savi-zx-bin/src/custom
 PATH_add ./all-capi/.node_modules/bin/
 ```
 
