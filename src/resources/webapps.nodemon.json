@@ -1,0 +1,8 @@
+{
+  "exec": "mygulp",
+  "ext": "html, js, css, less, pug",
+  "events": {
+    "start": "clear && printf \"\\e[3J\""
+  },
+  "watch": ["./components/*", "./schemas/*", "./scripts/*"]
+}

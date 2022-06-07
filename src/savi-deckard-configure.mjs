@@ -1,6 +1,6 @@
 #!/usr/bin/env zx
 import { EOL } from 'os';
-import { $, chalk, fs, path } from 'zx';
+import { chalk, fs, path } from 'zx';
 
 import { SAVI_HOME_ALL_CAPI, SAVI_HOME_ALL_WEB } from './util/env.mjs';
 import { readFileLineByLine } from './util/fs.mjs';

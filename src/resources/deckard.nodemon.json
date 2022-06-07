@@ -1,0 +1,15 @@
+{
+  "exec": "mygulp && NODE_ENV=dev node propsApp.js localhost localhost.ini",
+  "ext": "js, css, less, pug",
+  "events": {
+    "start": "clear && printf \"\\e[3J\""
+  },
+  "watch": [
+    "./*.js",
+    "./config/*",
+    "./lib/*",
+    "./routes/*",
+    "./scripts/*",
+    "./views/*"
+  ]
+}

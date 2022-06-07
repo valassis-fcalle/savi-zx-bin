@@ -1,0 +1,17 @@
+{
+  "exec": "mygulp",
+  "ext": "js, css, less, pug",
+  "events": {
+    "start": "clear && printf \"\\e[3J\""
+  },
+  "watch": [
+    "./*.js",
+    "./*.pug",
+    "./lib/*",
+    "./locales/*",
+    "./profiles/*",
+    "./scroller/*",
+    "./stylesheets/*",
+    "./views/*"
+  ]
+}
