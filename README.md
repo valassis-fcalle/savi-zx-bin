@@ -25,3 +25,10 @@ PATH_add ./all-capi/.node_modules/bin/
 Finally, allow direnv configuration file by running `direnv allow`. Now you have
 access to all the savi commands (they are only accessible once you cd into your
 SAVI home directory)
+
+## Create custom commands
+
+If you want to have your own commands, but do not wish to share with the rest of
+us (because you're ... you 🤣), you can create them within the `custom` folder
+under the `src` folder. Just remember to make them executable by running
+`chmod +x <path to your script>`so it can be executed from the command line.
