@@ -3,7 +3,7 @@
   "ignorePaths": [],
   "dictionaryDefinitions": [],
   "dictionaries": [],
-  "words": ["capi", "savi", "valassis"],
+  "words": ["capi", "direnv", "envrc", "savi", "valassis"],
   "ignoreWords": [],
   "import": []
 }
