@@ -2,6 +2,7 @@
 
 import { $, argv, cd, chalk, fs, path, question, quiet } from 'zx';
 import { SAVI_HOME_ALL_CAPI, SAVI_HOME_ALL_WEB } from './util/env.mjs';
+import { isSymbolicLink } from './util/fs.mjs';
 import {
   cloneRepository,
   getPackageName,
@@ -63,21 +64,27 @@ for (let index = 0; index < installedDependencies.length; index += 1) {
     }
   }
 
-  cd(path.resolve(projectDirectory, 'node_modules', '@digital-coupons'));
-  await $`rm -rf ${dependency}`;
-  if (fs.pathExistsSync(`${SAVI_HOME_ALL_CAPI}/${repoName}`)) {
-    await $`ln -s ${SAVI_HOME_ALL_CAPI}/${repoName} ${dependency}`;
-  } else if (fs.pathExistsSync(`${SAVI_HOME_ALL_WEB}/${repoName}`)) {
-    await $`ln -s ${SAVI_HOME_ALL_WEB}/${repoName} ${dependency}`;
+  if (
+    !isSymbolicLink(path.resolve(digitalCouponsDependenciesPath, dependency))
+  ) {
+    cd(digitalCouponsDependenciesPath);
+    await $`rm -rf ${dependency}`;
+    if (fs.pathExistsSync(`${SAVI_HOME_ALL_CAPI}/${repoName}`)) {
+      await $`ln -s ${SAVI_HOME_ALL_CAPI}/${repoName} ${dependency}`;
+    } else if (fs.pathExistsSync(`${SAVI_HOME_ALL_WEB}/${repoName}`)) {
+      await $`ln -s ${SAVI_HOME_ALL_WEB}/${repoName} ${dependency}`;
+    } else {
+      console.log(
+        chalk.red.bold(`Cannot link ${dependency} (repo name is: ${repoName})`)
+      );
+      console.log(
+        chalk.red.bold(`Not found at ${SAVI_HOME_ALL_CAPI}/${repoName}`)
+      );
+      console.log(
+        chalk.red.bold(`Not found at ${SAVI_HOME_ALL_WEB}/${repoName}`)
+      );
+    }
   } else {
-    console.log(
-      chalk.red.bold(`Cannot link ${dependency} (repo name is: ${repoName})`)
-    );
-    console.log(
-      chalk.red.bold(`Not found at ${SAVI_HOME_ALL_CAPI}/${repoName}}`)
-    );
-    console.log(
-      chalk.red.bold(`Not found at ${SAVI_HOME_ALL_WEB}/${repoName}}`)
-    );
+    console.log(chalk.gray(`skipped ${dependency} link (already a symlink)`));
   }
 }

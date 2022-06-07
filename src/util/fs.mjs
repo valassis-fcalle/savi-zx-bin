@@ -15,4 +15,12 @@ function getDirectories(folder, hasPackageJson = false) {
   return directories;
 }
 
-export { getDirectories };
+function isSymbolicLink(linkPath) {
+  if (!fs.existsSync(linkPath)) {
+    return false;
+  }
+  const statsObj = fs.lstatSync(linkPath);
+  return statsObj.isSymbolicLink();
+}
+
+export { getDirectories, isSymbolicLink };

@@ -28,14 +28,6 @@ async function createLinksForSet(packagesNames) {
   }
 }
 
-function isSymbolicLink(path, packageName) {
-  if (!fs.existsSync(`${path}/node_modules/${packageName}`)) {
-    return false;
-  }
-  const statsObj = fs.lstatSync(`${path}/node_modules/${packageName}`);
-  return statsObj.isSymbolicLink();
-}
-
 async function usesSymLinks(packagesNames) {
   const spinner = ora('Checking links ...');
 
@@ -116,11 +108,4 @@ async function useLinks() {
   }
 }
 
-export {
-  checkLinks,
-  createLinks,
-  createLinksForSet,
-  isSymbolicLink,
-  useLinks,
-  usesSymLinks,
-};
+export { checkLinks, createLinks, createLinksForSet, useLinks, usesSymLinks };
