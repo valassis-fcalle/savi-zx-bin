@@ -5,8 +5,6 @@ import ora from 'ora';
 import { packagesMap } from './packages-process.mjs';
 import { pick } from './pick.mjs';
 
-$.verbose = process.env.DEBUG === 'true' || false;
-
 const whichResult = await $`npm root --global`;
 const ROOT_NODE_MODULES = `${whichResult.stdout}`;
 const { ALL_CAPI_HOME } = process.env;
@@ -118,4 +116,11 @@ async function useLinks() {
   }
 }
 
-export { createLinks, checkLinks, useLinks };
+export {
+  checkLinks,
+  createLinks,
+  createLinksForSet,
+  isSymbolicLink,
+  useLinks,
+  usesSymLinks,
+};

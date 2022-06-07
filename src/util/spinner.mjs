@@ -17,7 +17,7 @@ function spinnerStart() {
 function spinnerStop() {
   if (spinner) {
     spinner.stop();
-    spinner = null;
+    spinner = undefined;
   }
 }
 

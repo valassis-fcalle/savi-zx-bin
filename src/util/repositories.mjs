@@ -1,5 +1,3 @@
-#!/usr/bin/env zx
-
 import { $, cd, chalk, fs, path } from 'zx';
 import { SAVI_HOME } from './env.mjs';
 import {
@@ -10,17 +8,51 @@ import {
   spinnerStop,
 } from './spinner.mjs';
 
+const CACHE_FILE_PATH = path.resolve(SAVI_HOME, 'repositories.json');
 const GITHUB_HOST = 'github.com';
 const GITHUB_ORGANIZATION = 'Valassis-Digital-Media';
 const GITHUB_USER = 'git';
+const PACKAGES_PREFIX = '@digital-coupons/';
 
-const repositoriesMap = {};
+const mapping = {
+  package: {},
+  repository: {},
+};
 
-const cacheFilePath = path.resolve(SAVI_HOME, 'repositories.json');
+async function cloneRepository({ parentFolder, repository, force = false }) {
+  cd(parentFolder);
+  console.log('⬇️ ', chalk.bold('Cloning repository'));
+  console.log('parentFolder:', parentFolder);
+  console.log('repository  :', repository);
+
+  if (force) {
+    await $`rm -rf ${repository}`;
+  }
+  if (fs.existsSync(repository)) {
+    console.log(chalk.yellow('Repository already exists'));
+    return;
+  }
+  await $`gh repo clone ${GITHUB_ORGANIZATION}/${repository}`;
+}
+
+function getPackageName(name = '') {
+  if (name.startsWith(PACKAGES_PREFIX)) {
+    return name;
+  }
+  return `${PACKAGES_PREFIX}${name}`;
+}
+
+function getPackageNameByRepoName(name) {
+  return mapping.repository[name];
+}
+
+function getRepoNameByPackage(name) {
+  return mapping.package[getPackageName(name)];
+}
 
 async function refreshRepositoriesMapping() {
-  if (fs.existsSync(cacheFilePath)) {
-    console.log(chalk.yellowBright(`${cacheFilePath} file already exists`));
+  if (fs.existsSync(CACHE_FILE_PATH)) {
+    console.log(chalk.yellowBright(`${CACHE_FILE_PATH} file already exists`));
     console.log(chalk.gray('remove it to force repositories refresh'));
     return;
   }
@@ -43,23 +75,21 @@ async function refreshRepositoriesMapping() {
     try {
       const responsePackageName =
         await $`gh api /repos/Valassis-Digital-Media/${repositoryName}/contents/package.json --jq '.content'`;
-      const repositoryPackageName = JSON.parse(
-        Buffer.from(`${responsePackageName}`, 'base64')
-          .toString('utf-8')
-          .replace(/\n/, '')
-      ).name;
+      const repositoryPackageName = getPackageName(
+        JSON.parse(
+          Buffer.from(`${responsePackageName}`, 'base64')
+            .toString('utf-8')
+            .replace(/\n/, '')
+        ).name || repositoryName
+      );
       spinnerSetText(
         chalk.italic.gray(
           `repository: ${repositoryName}, package:  ${repositoryPackageName}`
         )
       );
 
-      repositoriesMap[repositoryName] = {
-        name: {
-          directory: repositoryName,
-          package: repositoryPackageName || repositoryName,
-        },
-      };
+      mapping.repository[repositoryName] = repositoryPackageName;
+      mapping.package[repositoryPackageName] = repositoryName;
     } catch (error) {
       if (error.message.indexOf('404') === -1) {
         console.error(
@@ -77,20 +107,17 @@ async function refreshRepositoriesMapping() {
   spinnerStop();
 
   console.log('💾 ', chalk.bold.white(`Writing cache file:`));
-  console.log(chalk.bold.white(cacheFilePath));
-  await fs.writeJson(cacheFilePath, repositoriesMap, { spaces: 2 });
+  console.log(CACHE_FILE_PATH);
+  await fs.writeJson(CACHE_FILE_PATH, { mapping }, { spaces: 2 });
 }
 
-async function cloneRepository({ parentFolder, repository, force = false }) {
-  cd(parentFolder);
-  console.log('⬇️ ', chalk.bold('Cloning repository'));
-  console.log('parentFolder:', parentFolder);
-  console.log('repository  :', repository);
-
-  if (force) {
-    await $`rm -rf ${repository}`;
+async function resetToMaster(repositoryFolder, hardClean = false) {
+  cd(repositoryFolder);
+  if (hardClean) {
+    await $`git clean -fdx`;
   }
-  await $`gh repo clone ${GITHUB_ORGANIZATION}/${repository}`;
+  await $`git checkout master`;
+  await $`git reset --hard HEAD`;
 }
 
 async function updateSubmodules(repositoryFolder) {
@@ -111,10 +138,11 @@ async function updateSubmodules(repositoryFolder) {
 }
 
 export {
-  GITHUB_HOST,
-  GITHUB_ORGANIZATION,
-  GITHUB_USER,
   cloneRepository,
+  getPackageName,
+  getPackageNameByRepoName,
+  getRepoNameByPackage,
   refreshRepositoriesMapping,
+  resetToMaster,
   updateSubmodules,
 };

@@ -1,5 +1,3 @@
-#!/usr/bin/env zx
-
 import { $, chalk, which } from 'zx';
 
 $.verbose = process.env.DEBUG === 'true' || false;

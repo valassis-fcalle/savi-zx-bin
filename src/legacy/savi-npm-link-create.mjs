@@ -2,9 +2,7 @@
 
 import { $ } from 'zx';
 import { processPackages } from './util/packages-process.mjs';
-import { install } from './util/packages-install.mjs';
-
-$.verbose = process.env.DEBUG === 'true' || false;
+import { createLinks } from './util/links.mjs';
 
 await processPackages();
-await install();
+await createLinks();

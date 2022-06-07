@@ -1,12 +1,7 @@
 #!/usr/bin/env zx
 
 import { existsSync, lstatSync, readdirSync, readFileSync } from 'fs';
-
-if (!process.env.ALL_CAPI_HOME || process.env.ALL_CAPI_HOME.length === 0) {
-  console.error('🔥 ALL_CAPI_HOME env variable not found or empty');
-  process.exit(1);
-}
-const { ALL_CAPI_HOME } = process.env;
+import { SAVI_HOME_ALL_CAPI } from './env.mjs';
 
 const packagesMap = {};
 let allPackagesNames = [];
@@ -23,14 +18,18 @@ function processPackages(force = false) {
   }
 
   // list all folders in all-capi
-  const dirNames = readdirSync(ALL_CAPI_HOME)
+  const dirNames = readdirSync(SAVI_HOME_ALL_CAPI)
     .filter((entry) => !entry.startsWith('.'))
-    .filter((entry) => lstatSync(`${ALL_CAPI_HOME}/${entry}`).isDirectory())
-    .filter((entry) => existsSync(`${ALL_CAPI_HOME}/${entry}/package.json`));
+    .filter((entry) =>
+      lstatSync(`${SAVI_HOME_ALL_CAPI}/${entry}`).isDirectory()
+    )
+    .filter((entry) =>
+      existsSync(`${SAVI_HOME_ALL_CAPI}/${entry}/package.json`)
+    );
 
   // build packages map
   dirNames.forEach((dirName) => {
-    const path = `${ALL_CAPI_HOME}/${dirName}`;
+    const path = `${SAVI_HOME_ALL_CAPI}/${dirName}`;
     const json = JSON.parse(readFileSync(`${path}/package.json`));
 
     let currentDependencies = [];
