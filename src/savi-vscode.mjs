@@ -40,7 +40,7 @@ function showHelp() {
   }
 }
 
-async function openWorkSpace(workspace) {
+async function vscodeWorkspaceOpen(workspace) {
   const workspaceFile = path.resolve(
     VSCODE_FOLDER,
     `${workspace}.code-workspace`
@@ -55,7 +55,7 @@ async function openWorkSpace(workspace) {
   process.exit(0);
 }
 
-async function askAndOpenExistingWorkspace() {
+async function workspaceOpen() {
   existingWorkspaces = await getFiles(VSCODE_FOLDER).filter((fileName) =>
     fileName.endsWith('code-workspace')
   );
@@ -85,7 +85,7 @@ async function askAndOpenExistingWorkspace() {
           type: 'list',
         },
       ]);
-      await openWorkSpace(workspace);
+      await vscodeWorkspaceOpen(workspace);
     }
     const { createNewWorkspace } = await inquirer.prompt([
       {
@@ -101,7 +101,7 @@ async function askAndOpenExistingWorkspace() {
   }
 }
 
-async function createAndOpenWorkspace() {
+async function workspaceCreate() {
   const allCapiProjectsChoices = getDirectories(SAVI_HOME_ALL_CAPI, true).sort(
     (a, b) => a.localeCompare(b, undefined, { sensitivity: 'base' })
   );
@@ -201,7 +201,7 @@ async function createAndOpenWorkspace() {
     }
   );
 
-  await openWorkSpace(workspaceName);
+  await vscodeWorkspaceOpen(workspaceName);
 }
 
 // MAIN
@@ -209,5 +209,6 @@ async function createAndOpenWorkspace() {
 showHelp();
 
 await refreshRepositoriesMapping();
-await askAndOpenExistingWorkspace();
-await createAndOpenWorkspace();
+
+await workspaceOpen();
+await workspaceCreate();
