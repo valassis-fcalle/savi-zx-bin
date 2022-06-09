@@ -19,6 +19,8 @@
   },
   "homepage": "https://github.com/valassis-fcalle/savi-zx-bin#readme",
   "dependencies": {
+    "inquirer": "8.2.4",
+    "inquirer-checkbox-autocomplete-prompt": "0.2.0",
     "ora": "6.1.0",
     "zx": "6.1.0"
   },

@@ -1,8 +1,9 @@
-import { $, chalk, which } from 'zx';
+import { $, chalk, path, which } from 'zx';
 
 $.verbose = process.env.DEBUG === 'true' || false;
 
-const { SAVI_HOME, SAVI_HOME_ALL_CAPI, SAVI_HOME_ALL_WEB } = process.env;
+const { CODE_COMMAND_ARGS, SAVI_HOME, SAVI_HOME_ALL_CAPI, SAVI_HOME_ALL_WEB } =
+  process.env;
 
 let missingEnvVariables = false;
 if (!SAVI_HOME) {
@@ -23,6 +24,13 @@ if (missingEnvVariables) {
 }
 
 // check for minimum requirements to work
+const CODE_COMMAND = await which('code');
+if (!CODE_COMMAND) {
+  console.log(chalk.red('vscode command line command not found'));
+  process.exit(1);
+}
+const VSCODE_FOLDER = path.resolve(SAVI_HOME, 'vscode');
+
 const gh = await which('gh');
 if (!gh) {
   console.log(chalk.red('> GitHub client not found. Please install it'));
@@ -30,4 +38,11 @@ if (!gh) {
   process.exit(1);
 }
 
-export { SAVI_HOME, SAVI_HOME_ALL_CAPI, SAVI_HOME_ALL_WEB };
+export {
+  CODE_COMMAND,
+  CODE_COMMAND_ARGS,
+  SAVI_HOME,
+  SAVI_HOME_ALL_CAPI,
+  SAVI_HOME_ALL_WEB,
+  VSCODE_FOLDER,
+};

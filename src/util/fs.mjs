@@ -1,6 +1,6 @@
-import { chalk, fs, path } from 'zx';
-import readline from 'readline';
 import { once } from 'events';
+import readline from 'readline';
+import { chalk, fs, path } from 'zx';
 
 function getDirectories(folder, hasPackageJson = false) {
   const directories = fs
@@ -9,12 +9,21 @@ function getDirectories(folder, hasPackageJson = false) {
     .filter((entry) => fs.lstatSync(`${folder}/${entry}`).isDirectory());
 
   if (hasPackageJson) {
-    return directories.filter(
-      fs.pathExists(path.resolve(folder, 'package.json'))
+    return directories.filter((directory) =>
+      fs.pathExists(path.resolve(folder, directory, 'package.json'))
     );
   }
 
   return directories;
+}
+
+function getFiles(folder) {
+  const files = fs
+    .readdirSync(folder)
+    .filter((entry) => !entry.startsWith('.'))
+    .filter((entry) => fs.lstatSync(`${folder}/${entry}`).isFile());
+
+  return files || [];
 }
 
 function isSymbolicLink(linkPath) {
@@ -49,4 +58,4 @@ async function readFileLineByLine(filePath) {
   return lines;
 }
 
-export { getDirectories, isSymbolicLink, readFileLineByLine };
+export { getDirectories, getFiles, isSymbolicLink, readFileLineByLine };

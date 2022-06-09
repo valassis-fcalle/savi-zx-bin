@@ -20,6 +20,13 @@ const mapping = {
   repository: {},
 };
 
+function getPackageName(name = '') {
+  if (name.startsWith(PACKAGES_PREFIX)) {
+    return name;
+  }
+  return `${PACKAGES_PREFIX}${name}`;
+}
+
 async function refreshRepositoriesMapping() {
   if (initialized && fs.existsSync(CACHE_FILE_PATH)) {
     console.log(chalk.yellowBright(`${CACHE_FILE_PATH} file already exists`));
@@ -104,13 +111,6 @@ async function cloneRepository({ parentFolder, repository, force = false }) {
     return;
   }
   await $`gh repo clone ${GITHUB_ORGANIZATION}/${repository}`;
-}
-
-function getPackageName(name = '') {
-  if (name.startsWith(PACKAGES_PREFIX)) {
-    return name;
-  }
-  return `${PACKAGES_PREFIX}${name}`;
 }
 
 function getPackageNameByRepoName(name) {

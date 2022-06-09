@@ -13,14 +13,19 @@ following content
 
 ```bash
 export SAVI_HOME=/Users/<your user>/Dev/savi
+export SAVI_HOME_ALL_CAPI=/Users/<your user>/Dev/savi/all-capi
+export SAVI_HOME_ALL_WEB=/Users/<your user>/Dev/savi/all-web
 
-export ALL_CAPI_HOME=/Users/<your user>/Dev/savi/all-capi
-export ALL_WEB_HOME=/Users/<your user>/Dev/savi/all-web
+export CODE_COMMAND_ARGS="--user-data-dir /Users/<your user>/Dev/vscode/savi/data --extensions-dir /Users/<your user>/Dev/vscode/valassis/extensions"
 
 PATH_add ./savi-zx-bin/src
 PATH_add ./savi-zx-bin/src/custom
 PATH_add ./all-capi/.node_modules/bin/
 ```
+
+This configuration assumes you are going to be developing under SAVI_HOME and
+there you would have an ALL_CAPI and ALL_WEB folder (they will be generated if
+you use savi-init.mjs)
 
 Finally, allow direnv configuration file by running `direnv allow`. Now you have
 access to all the savi commands (they are only accessible once you cd into your
