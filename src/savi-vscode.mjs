@@ -102,17 +102,13 @@ async function askAndOpenExistingWorkspace() {
 }
 
 async function createAndOpenWorkspace() {
-  const allCapiProjectsChoices = [
-    { name: 'None, skip to the next question', value: 'none' },
-  ].concat(
-    getDirectories(SAVI_HOME_ALL_CAPI, true).sort((a, b) =>
-      a.localeCompare(b, undefined, { sensitivity: 'base' })
-    )
+  const allCapiProjectsChoices = getDirectories(SAVI_HOME_ALL_CAPI, true).sort(
+    (a, b) => a.localeCompare(b, undefined, { sensitivity: 'base' })
   );
+
   const { allCapiProjects } = await inquirer.prompt([
     {
       choices: allCapiProjectsChoices,
-      default: ['none'],
       loop: false,
       message: 'Select projects from SAVI_HOME_ALL_CAPI folder',
       name: 'allCapiProjects',
@@ -120,17 +116,12 @@ async function createAndOpenWorkspace() {
       type: 'checkbox-autocomplete',
     },
   ]);
-  const allWebProjectsChoices = [
-    { name: 'None, finish this', value: 'none' },
-  ].concat(
-    getDirectories(SAVI_HOME_ALL_WEB, true).sort((a, b) =>
-      a.localeCompare(b, undefined, { sensitivity: 'base' })
-    )
+  const allWebProjectsChoices = getDirectories(SAVI_HOME_ALL_WEB, true).sort(
+    (a, b) => a.localeCompare(b, undefined, { sensitivity: 'base' })
   );
   const { allWebProjects } = await inquirer.prompt([
     {
       choices: allWebProjectsChoices,
-      default: ['none'],
       loop: false,
       message: 'Select projects from SAVI_HOME_ALL_WEB folder',
       name: 'allWebProjects',
@@ -139,19 +130,13 @@ async function createAndOpenWorkspace() {
     },
   ]);
   let emptyCount = 0;
-  if (
-    allCapiProjects.length === 0 ||
-    (allCapiProjects.length === 1 && allCapiProjects[0] === 'none')
-  ) {
+  if (allCapiProjects.length === 0) {
     console.log(
       chalk.white.dim(`No project from ALL_CAPI will be added to the workspace`)
     );
     emptyCount += 1;
   }
-  if (
-    allWebProjects.length === 0 ||
-    (allWebProjects.length === 1 && allWebProjects[0] === 'none')
-  ) {
+  if (allWebProjects.length === 0) {
     console.log(
       chalk.white.dim(`No project from ALL_WEB will be added to the workspace`)
     );
