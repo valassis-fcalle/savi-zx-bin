@@ -55,15 +55,19 @@ async function vscodeWorkspaceOpen(workspace) {
   process.exit(0);
 }
 
-async function workspaceOpen() {
+async function workspacesLoad() {
   existingWorkspaces = await getFiles(VSCODE_FOLDER).filter((fileName) =>
     fileName.endsWith('code-workspace')
   );
-  if (existingWorkspaces.length > 0) {
-    workspacesJson = fs.readJSONSync(
-      path.resolve(VSCODE_FOLDER, 'workspaces.json')
-    );
 
+  const workspacesPath = path.resolve(VSCODE_FOLDER, 'workspaces.json');
+  if (fs.existsSync(workspacesPath)) {
+    workspacesJson = fs.readJSONSync(workspacesPath);
+  }
+}
+
+async function workspaceOpen() {
+  if (existingWorkspaces.length > 0) {
     const { openExistingOne } = await inquirer.prompt([
       {
         name: 'openExistingOne',
@@ -204,11 +208,61 @@ async function workspaceCreate() {
   await vscodeWorkspaceOpen(workspaceName);
 }
 
+async function workspaceRemove() {
+  if (argv.remove) {
+    const choices = Object.values(workspacesJson).map((value) => ({
+      name: `${value.name}: ${value.description}`,
+      value: value.name,
+    }));
+    const { workspacesToRemove } = await inquirer.prompt([
+      {
+        choices,
+        loop: false,
+        message: 'Select the workspaces to remove',
+        name: 'workspacesToRemove',
+        pageSize: 5,
+        type: 'checkbox-autocomplete',
+      },
+    ]);
+    const { confirmRemove } = await inquirer.prompt([
+      {
+        default: false,
+        name: 'confirmRemove',
+        message: chalk.red(
+          'Are you sure you want to remove the selected workspaces?'
+        ),
+        type: 'confirm',
+      },
+    ]);
+
+    if (!confirmRemove) {
+      console.log(chalk.gray('Process aborted. Nothing has been modified'));
+      process.exit(0);
+    }
+
+    workspacesToRemove.forEach((key) => {
+      const filePath = path.resolve(VSCODE_FOLDER, `${key}.code-workspace`);
+      if (fs.existsSync(filePath)) {
+        fs.unlinkSync(filePath);
+      }
+      delete workspacesJson[key];
+    });
+    await fs.writeJSON(
+      path.resolve(VSCODE_FOLDER, 'workspaces.json'),
+      workspacesJson,
+      { spaces: 2 }
+    );
+    process.exit(0);
+  }
+}
+
 // MAIN
 // -----------------------------------------------------------------------------
 showHelp();
 
 await refreshRepositoriesMapping();
+await workspacesLoad();
 
+await workspaceRemove();
 await workspaceOpen();
 await workspaceCreate();

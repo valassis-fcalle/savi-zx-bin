@@ -37,3 +37,20 @@ If you want to have your own commands, but do not wish to share with the rest of
 us (because you're ... you 🤣), you can create them within the `custom` folder
 under the `src` folder. Just remember to make them executable by running
 `chmod +x <path to your script>`so it can be executed from the command line.
+
+## Commands
+
+### savi-vscode
+
+Allow you to create/open/remove VSCode workspaces. This will open vscode with
+multiple folder but not all what there is inside ALL_CAPI and ALL_WEB since that
+drains your computer resources.
+
+Running `savi-vscode.mjs` will prompt you to open an existing workspace (if any)
+allowing you to select one showing the name and description you have provide
+during the creation.
+If you skip that, you can create a new one, selecting projects from the ALL_CAPI
+and ALL_WEB. The process will ask you for a name and a description for the
+workspace.
+Running the command with `--remove` will allow you to remove multiple created
+workspaces.

@@ -18,6 +18,10 @@ function getDirectories(folder, hasPackageJson = false) {
 }
 
 function getFiles(folder) {
+  if (!fs.existsSync(folder)) {
+    return [];
+  }
+
   const files = fs
     .readdirSync(folder)
     .filter((entry) => !entry.startsWith('.'))
