@@ -73,8 +73,10 @@ async function refreshRepositoriesMapping() {
         )
       );
 
-      mapping.repository[repositoryName] = repositoryPackageName;
-      mapping.package[repositoryPackageName] = repositoryName;
+      mapping.repository[repositoryName.toLowerCase()] =
+        repositoryPackageName.toLowerCase();
+      mapping.package[repositoryPackageName.toLowerCase()] =
+        repositoryName.toLowerCase();
     } catch (error) {
       if (error.message.indexOf('404') === -1) {
         console.error(
@@ -114,14 +116,14 @@ async function cloneRepository({ parentFolder, repository, force = false }) {
 }
 
 function getPackageNameByRepoName(name) {
-  return mapping.repository[name];
+  return mapping.repository[name.toLowerCase()];
 }
 
 async function getRepoNameByPackage(name) {
   if (!initialized) {
     await refreshRepositoriesMapping();
   }
-  return mapping.package[getPackageName(name)];
+  return mapping.package[getPackageName(name.toLowerCase())];
 }
 
 async function resetToMaster(repositoryFolder, hardClean = false) {
