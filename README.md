@@ -54,3 +54,23 @@ and ALL_WEB. The process will ask you for a name and a description for the
 workspace.
 Running the command with `--remove` will allow you to remove multiple created
 workspaces.
+
+
+### savi-deckard-configure
+
+### savi-init
+
+### savi-nodemon
+
+### savi-npm-link
+
+### savi-npm-links-global
+
+### savi-npm-versions.mjs
+
+Retrieves from npm registry the real versions of the packages.
+Accepted arguments are:
+
+--capi: shows the versions of all packages under the `all-capi` project
+--web: shows the versions of all packages under the `all-web` project
+--name "glob exp": shows the versions for the matching project names
