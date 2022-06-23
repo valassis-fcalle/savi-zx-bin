@@ -2,6 +2,8 @@
 
 Set of command line tools to help developers interact with local environment.
 
+Built using google's [zx](https://github.com/google/zx)
+
 ## Requirements
 
 1. Create a SAVI home directory, i.e. `~/Dev/savi`
