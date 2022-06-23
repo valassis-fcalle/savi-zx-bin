@@ -26,8 +26,8 @@ PATH_add ./all-capi/.node_modules/bin/
 ```
 
 This configuration assumes you are going to be developing under SAVI_HOME and
-there you would have an ALL_CAPI and ALL_WEB folder (they will be generated if
-you use savi-init.mjs)
+there you would have an `ALL_CAPI` and `ALL_WEB` folder (they will be generated
+if you use `savi-init.mjs`)
 
 Finally, allow direnv configuration file by running `direnv allow`. Now you have
 access to all the savi commands (they are only accessible once you cd into your
@@ -57,22 +57,35 @@ workspace.
 Running the command with `--remove` will allow you to remove multiple created
 workspaces.
 
-
 ### savi-deckard-configure
+
+Creates the `localhost.ini` configuration file linked with the local projects.
 
 ### savi-init
 
+Initializes the local environment creating the `all-capi` and `all-web` folders
+containing the submodules defined in those repositories.
+
 ### savi-nodemon
+
+Creates the `nodemon.json` files for the projects that need to be rebuilt once
+you change a file inside the project.
 
 ### savi-npm-link
 
+Creates the links inside the `node_modules` belonging to the current folder
+using the references from `ALL_CAPI` and `ALL_WEB`
+
 ### savi-npm-links-global
+
+Creates the links in the `npm root --global` folder required to run the local
+tooling such as tests.
 
 ### savi-npm-versions.mjs
 
 Retrieves from npm registry the real versions of the packages.
 Accepted arguments are:
 
-* --capi: shows the versions of all packages under the `all-capi` project
-* --web: shows the versions of all packages under the `all-web` project
-* --name "glob exp": shows the versions for the matching project names
+- --capi: shows the versions of all packages under the `all-capi` project
+- --web: shows the versions of all packages under the `all-web` project
+- --name "glob exp": shows the versions for the matching project names
