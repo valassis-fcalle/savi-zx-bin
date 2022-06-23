@@ -71,6 +71,6 @@ workspaces.
 Retrieves from npm registry the real versions of the packages.
 Accepted arguments are:
 
---capi: shows the versions of all packages under the `all-capi` project
---web: shows the versions of all packages under the `all-web` project
---name "glob exp": shows the versions for the matching project names
+* --capi: shows the versions of all packages under the `all-capi` project
+* --web: shows the versions of all packages under the `all-web` project
+* --name "glob exp": shows the versions for the matching project names
