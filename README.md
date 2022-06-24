@@ -74,9 +74,13 @@ you change a file inside the project.
 ### savi-npm-link
 
 Creates the links inside the `node_modules` belonging to the current folder
-using the references from `ALL_CAPI` and `ALL_WEB`
+using the references from `ALL_CAPI` and `ALL_WEB`. It can be run in auto mode (
+it will link all the installed dependencies) or in interactive mode where you
+have to select which dependencies to link.
 
-### savi-npm-links-global
+Accepted arguments are:
+
+- `--interactive` or `-i`
 
 Creates the links in the `npm root --global` folder required to run the local
 tooling such as tests.
