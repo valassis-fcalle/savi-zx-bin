@@ -61,6 +61,11 @@ workspaces.
 
 Creates the `localhost.ini` configuration file linked with the local projects.
 
+### savi-fix-version
+
+Obtains the current published version of the package and updates the
+`package.json` file.
+
 ### savi-init
 
 Initializes the local environment creating the `all-capi` and `all-web` folders
