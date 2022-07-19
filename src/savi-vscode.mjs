@@ -6,8 +6,8 @@ import { $, argv, chalk, fs, path } from 'zx';
 import {
   CODE_COMMAND,
   CODE_COMMAND_ARGS,
-  SAVI_HOME_ALL_CAPI,
-  SAVI_HOME_ALL_WEB,
+  SAVI_HOME_OTHERS,
+  SAVI_HOME_ROOT,
   VSCODE_FOLDER,
 } from './util/env.mjs';
 import { getDirectories, getFiles } from './util/fs.mjs';
@@ -28,13 +28,13 @@ let workspacesJson;
 function showHelp() {
   if (argv.about) {
     console.log(
-      chalk.bold.italic.whiteBright(`Opens VSCode with a custom workspace`)
+      chalk.bold.italic.whiteBright(`Opens VSCode with a custom workspace`),
     );
     console.log(
       chalk.gray(`
   Offers you to re-open a previously created workspace or to create a new one
   with a ${chalk.italic('wizard')} to create it allowing you to select which
-  projects to add (opening everything is too expensive)`)
+  projects to add (opening everything is too expensive)`),
     );
     process.exit(0);
   }
@@ -43,7 +43,7 @@ function showHelp() {
 async function vscodeWorkspaceOpen(workspace) {
   const workspaceFile = path.resolve(
     VSCODE_FOLDER,
-    `${workspace}.code-workspace`
+    `${workspace}.code-workspace`,
   );
   if (CODE_COMMAND_ARGS) {
     const args = CODE_COMMAND_ARGS.split(' ');
@@ -57,7 +57,7 @@ async function vscodeWorkspaceOpen(workspace) {
 
 async function workspacesLoad() {
   existingWorkspaces = await getFiles(VSCODE_FOLDER).filter((fileName) =>
-    fileName.endsWith('code-workspace')
+    fileName.endsWith('code-workspace'),
   );
 
   const workspacesPath = path.resolve(VSCODE_FOLDER, 'workspaces.json');
@@ -106,50 +106,54 @@ async function workspaceOpen() {
 }
 
 async function workspaceCreate() {
-  const allCapiProjectsChoices = getDirectories(SAVI_HOME_ALL_CAPI, true).sort(
-    (a, b) => a.localeCompare(b, undefined, { sensitivity: 'base' })
+  const rootProjectsChoices = getDirectories(SAVI_HOME_ROOT, true).sort(
+    (a, b) => a.localeCompare(b, undefined, { sensitivity: 'base' }),
   );
 
-  const { allCapiProjects } = await inquirer.prompt([
+  const { rootProjects } = await inquirer.prompt([
     {
-      choices: allCapiProjectsChoices,
+      choices: rootProjectsChoices,
       loop: false,
-      message: 'Select projects from SAVI_HOME_ALL_CAPI folder',
-      name: 'allCapiProjects',
+      message: 'Select projects from ROOT folder',
+      name: 'rootProjects',
       pageSize: 5,
       type: 'checkbox-autocomplete',
     },
   ]);
-  const allWebProjectsChoices = getDirectories(SAVI_HOME_ALL_WEB, true).sort(
-    (a, b) => a.localeCompare(b, undefined, { sensitivity: 'base' })
+  const otherProjectsChoices = getDirectories(SAVI_HOME_OTHERS, true).sort(
+    (a, b) => a.localeCompare(b, undefined, { sensitivity: 'base' }),
   );
-  const { allWebProjects } = await inquirer.prompt([
+  const { otherProjects } = await inquirer.prompt([
     {
-      choices: allWebProjectsChoices,
+      choices: otherProjectsChoices,
       loop: false,
-      message: 'Select projects from SAVI_HOME_ALL_WEB folder',
-      name: 'allWebProjects',
+      message: 'Select projects from NON ROOT folder',
+      name: 'otherProjects',
       pageSize: 5,
       type: 'checkbox-autocomplete',
     },
   ]);
   let emptyCount = 0;
-  if (allCapiProjects.length === 0) {
+  if (rootProjects.length === 0) {
     console.log(
-      chalk.white.dim(`No project from ALL_CAPI will be added to the workspace`)
+      chalk.white.dim(
+        `No project from ROOT folder will be added to the workspace`,
+      ),
     );
     emptyCount += 1;
   }
-  if (allWebProjects.length === 0) {
+  if (otherProjects.length === 0) {
     console.log(
-      chalk.white.dim(`No project from ALL_WEB will be added to the workspace`)
+      chalk.white.dim(
+        `No project from NON ROOT folder will be added to the workspace`,
+      ),
     );
     emptyCount += 1;
   }
 
   if (emptyCount === 2) {
     console.log(
-      chalk.yellow('Workspace creation aborted. No project has been selected')
+      chalk.yellow('Workspace creation aborted. No project has been selected'),
     );
     process.exit(0);
   }
@@ -178,31 +182,35 @@ async function workspaceCreate() {
       [workspaceName]: {
         description: workspaceDescription,
         name: workspaceName,
-        capi: allCapiProjects,
-        web: allWebProjects,
+        root: rootProjects,
+        others: otherProjects,
       },
     },
-    { spaces: 2 }
+    { spaces: 2 },
   );
 
-  const allCapiEntries = (allCapiProjects || []).map((entry) => ({
-    name: getPackageName(getPackageName(entry)),
-    path: path.resolve(SAVI_HOME_ALL_CAPI, entry),
+  const rootEntries = (rootProjects || []).map((entry) => ({
+    name: getPackageName(getPackageName(entry))
+      .split('/')[1]
+      .toLocaleLowerCase(),
+    path: path.resolve(SAVI_HOME_ROOT, entry),
   }));
-  const allWebEntries = (allWebProjects || []).map((entry) => ({
-    name: getPackageName(getPackageName(entry)),
-    path: path.resolve(SAVI_HOME_ALL_WEB, entry),
+  const otherEntries = (otherProjects || []).map((entry) => ({
+    name: getPackageName(getPackageName(entry))
+      .split('/')[1]
+      .toLocaleLowerCase(),
+    path: path.resolve(SAVI_HOME_OTHERS, entry),
   }));
 
   await fs.writeJSON(
     path.resolve(VSCODE_FOLDER, `${workspaceName}.code-workspace`),
     {
-      folders: [].concat(allCapiEntries).concat(allWebEntries),
+      folders: [].concat(rootEntries).concat(otherEntries),
       settings: {},
     },
     {
       spaces: 2,
-    }
+    },
   );
 
   await vscodeWorkspaceOpen(workspaceName);
@@ -229,7 +237,7 @@ async function workspaceRemove() {
         default: false,
         name: 'confirmRemove',
         message: chalk.red(
-          'Are you sure you want to remove the selected workspaces?'
+          'Are you sure you want to remove the selected workspaces?',
         ),
         type: 'confirm',
       },
@@ -250,7 +258,7 @@ async function workspaceRemove() {
     await fs.writeJSON(
       path.resolve(VSCODE_FOLDER, 'workspaces.json'),
       workspacesJson,
-      { spaces: 2 }
+      { spaces: 2 },
     );
     process.exit(0);
   }

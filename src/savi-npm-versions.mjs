@@ -1,7 +1,7 @@
 #!/usr/bin/env zx
 
 import { $, argv, cd, chalk, glob } from 'zx';
-import { SAVI_HOME_ALL_CAPI, SAVI_HOME_ALL_WEB } from './util/env.mjs';
+import { SAVI_HOME_OTHERS, SAVI_HOME_ROOT } from './util/env.mjs';
 import { getDirectories } from './util/fs.mjs';
 import {
   getPackageNameByRepoName,
@@ -17,8 +17,8 @@ import {
 if (argv.about) {
   console.log(
     chalk.bold.italic.whiteBright(
-      `shows current versions of all the node based projects`
-    )
+      `shows current versions of all the node based projects`,
+    ),
   );
   console.log(
     chalk.gray(`
@@ -27,7 +27,7 @@ if (argv.about) {
       --capi: filters all repo under ALL_CAPI
       --web: filters all repo under ALL_WEB
       --name "mem-*": filters all repos with a name starting with mem-
-    `)
+    `),
   );
   process.exit(0);
 }
@@ -42,11 +42,11 @@ const globbyOptions = {
 };
 
 if (argv.capi) {
-  cd(SAVI_HOME_ALL_CAPI);
+  cd(SAVI_HOME_ROOT);
   dirs.concat(await getDirectories('.', true));
 }
 if (argv.web) {
-  cd(SAVI_HOME_ALL_WEB);
+  cd(SAVI_HOME_OTHERS);
   dirs.concat(await getDirectories('.', true));
 }
 if (argv.name) {
@@ -54,14 +54,14 @@ if (argv.name) {
   dirs = dirs.concat(
     await glob(filter, {
       ...globbyOptions,
-      cwd: SAVI_HOME_ALL_CAPI,
-    })
+      cwd: SAVI_HOME_ROOT,
+    }),
   );
   dirs = dirs.concat(
     await glob([argv.name, ...globbyFilters], {
       ...globbyOptions,
-      cwd: SAVI_HOME_ALL_WEB,
-    })
+      cwd: SAVI_HOME_OTHERS,
+    }),
   );
 }
 

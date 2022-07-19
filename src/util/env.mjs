@@ -2,7 +2,7 @@ import { $, chalk, path, which } from 'zx';
 
 $.verbose = process.env.DEBUG === 'true' || false;
 
-const { CODE_COMMAND_ARGS, SAVI_HOME, SAVI_HOME_ALL_CAPI, SAVI_HOME_ALL_WEB } =
+const { CODE_COMMAND_ARGS, SAVI_HOME, SAVI_HOME_ROOT, SAVI_HOME_OTHERS } =
   process.env;
 
 let missingEnvVariables = false;
@@ -10,12 +10,12 @@ if (!SAVI_HOME) {
   console.log(chalk.red('> SAVI_HOME env variable not defined'));
   missingEnvVariables = true;
 }
-if (!SAVI_HOME_ALL_CAPI) {
-  console.log(chalk.red('> SAVI_HOME_ALL_CAPI env variable not defined'));
+if (!SAVI_HOME_OTHERS) {
+  console.log(chalk.red('> SAVI_HOME_OTHERS env variable not defined'));
   missingEnvVariables = true;
 }
-if (!SAVI_HOME_ALL_WEB) {
-  console.log(chalk.red('> SAVI_HOME_ALL_WEB env variable not defined'));
+if (!SAVI_HOME_ROOT) {
+  console.log(chalk.red('> SAVI_HOME_ROOT env variable not defined'));
   missingEnvVariables = true;
 }
 
@@ -42,7 +42,7 @@ export {
   CODE_COMMAND,
   CODE_COMMAND_ARGS,
   SAVI_HOME,
-  SAVI_HOME_ALL_CAPI,
-  SAVI_HOME_ALL_WEB,
+  SAVI_HOME_OTHERS,
+  SAVI_HOME_ROOT,
   VSCODE_FOLDER,
 };
