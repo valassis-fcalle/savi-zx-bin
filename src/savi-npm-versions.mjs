@@ -1,7 +1,7 @@
 #!/usr/bin/env zx
 
 import { $, argv, cd, chalk, glob } from 'zx';
-import { SAVI_HOME_OTHERS, SAVI_HOME_ROOT } from './util/env.mjs';
+import { SAVI_HOME_ROOT } from './util/env.mjs';
 import { getDirectories } from './util/fs.mjs';
 import {
   getPackageNameByRepoName,
@@ -45,22 +45,12 @@ if (argv.capi) {
   cd(SAVI_HOME_ROOT);
   dirs.concat(await getDirectories('.', true));
 }
-if (argv.web) {
-  cd(SAVI_HOME_OTHERS);
-  dirs.concat(await getDirectories('.', true));
-}
 if (argv.name) {
   const filter = [argv.name, ...globbyFilters];
   dirs = dirs.concat(
     await glob(filter, {
       ...globbyOptions,
       cwd: SAVI_HOME_ROOT,
-    }),
-  );
-  dirs = dirs.concat(
-    await glob([argv.name, ...globbyFilters], {
-      ...globbyOptions,
-      cwd: SAVI_HOME_OTHERS,
     }),
   );
 }

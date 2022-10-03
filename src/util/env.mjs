@@ -2,16 +2,11 @@ import { $, chalk, path, which } from 'zx';
 
 $.verbose = process.env.DEBUG === 'true' || false;
 
-const { CODE_COMMAND_ARGS, SAVI_HOME, SAVI_HOME_ROOT, SAVI_HOME_OTHERS } =
-  process.env;
+const { CODE_COMMAND_ARGS, SAVI_HOME, SAVI_HOME_ROOT } = process.env;
 
 let missingEnvVariables = false;
 if (!SAVI_HOME) {
   console.log(chalk.red('> SAVI_HOME env variable not defined'));
-  missingEnvVariables = true;
-}
-if (!SAVI_HOME_OTHERS) {
-  console.log(chalk.red('> SAVI_HOME_OTHERS env variable not defined'));
   missingEnvVariables = true;
 }
 if (!SAVI_HOME_ROOT) {
@@ -42,7 +37,6 @@ export {
   CODE_COMMAND,
   CODE_COMMAND_ARGS,
   SAVI_HOME,
-  SAVI_HOME_OTHERS,
   SAVI_HOME_ROOT,
   VSCODE_FOLDER,
 };

@@ -6,7 +6,6 @@ import { $, argv, chalk, fs, path } from 'zx';
 import {
   CODE_COMMAND,
   CODE_COMMAND_ARGS,
-  SAVI_HOME_OTHERS,
   SAVI_HOME_ROOT,
   VSCODE_FOLDER,
 } from './util/env.mjs';
@@ -120,38 +119,8 @@ async function workspaceCreate() {
       type: 'checkbox-autocomplete',
     },
   ]);
-  const otherProjectsChoices = getDirectories(SAVI_HOME_OTHERS, true).sort(
-    (a, b) => a.localeCompare(b, undefined, { sensitivity: 'base' }),
-  );
-  const { otherProjects } = await inquirer.prompt([
-    {
-      choices: otherProjectsChoices,
-      loop: false,
-      message: 'Select projects from NON ROOT folder',
-      name: 'otherProjects',
-      pageSize: 5,
-      type: 'checkbox-autocomplete',
-    },
-  ]);
-  let emptyCount = 0;
-  if (rootProjects.length === 0) {
-    console.log(
-      chalk.white.dim(
-        `No project from ROOT folder will be added to the workspace`,
-      ),
-    );
-    emptyCount += 1;
-  }
-  if (otherProjects.length === 0) {
-    console.log(
-      chalk.white.dim(
-        `No project from NON ROOT folder will be added to the workspace`,
-      ),
-    );
-    emptyCount += 1;
-  }
 
-  if (emptyCount === 2) {
+  if (rootProjects.length === 0) {
     console.log(
       chalk.yellow('Workspace creation aborted. No project has been selected'),
     );
@@ -183,7 +152,6 @@ async function workspaceCreate() {
         description: workspaceDescription,
         name: workspaceName,
         root: rootProjects,
-        others: otherProjects,
       },
     },
     { spaces: 2 },
@@ -195,17 +163,11 @@ async function workspaceCreate() {
       .toLocaleLowerCase(),
     path: path.resolve(SAVI_HOME_ROOT, entry),
   }));
-  const otherEntries = (otherProjects || []).map((entry) => ({
-    name: getPackageName(getPackageName(entry))
-      .split('/')[1]
-      .toLocaleLowerCase(),
-    path: path.resolve(SAVI_HOME_OTHERS, entry),
-  }));
 
   await fs.writeJSON(
     path.resolve(VSCODE_FOLDER, `${workspaceName}.code-workspace`),
     {
-      folders: [].concat(rootEntries).concat(otherEntries),
+      folders: rootEntries,
       settings: {},
     },
     {
