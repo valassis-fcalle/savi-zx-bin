@@ -1,6 +1,6 @@
 import { $, chalk, path, which } from 'zx';
 
-$.verbose = process.env.DEBUG === 'true' || false;
+$.verbose = process.env.DEBUG === 'true';
 
 const { CODE_COMMAND_ARGS, SAVI_HOME, SAVI_HOME_ROOT } = process.env;
 
@@ -30,6 +30,13 @@ const gh = await which('gh');
 if (!gh) {
   console.log(chalk.red('> GitHub client not found. Please install it'));
   console.log('  Read more at https://github.com/cli/cli');
+  process.exit(1);
+}
+
+const gitBranchStatus = await which('git-branch-status');
+if (!gitBranchStatus) {
+  console.log(chalk.red('> git-branch status not found. Please install it'));
+  console.log('  npm i -g git-branch-status');
   process.exit(1);
 }
 
